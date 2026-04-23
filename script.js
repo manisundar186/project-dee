@@ -207,6 +207,7 @@ const unlockState = {
   storyDone: false,
   memoriesDone: false,
   huntDone: false,
+  timelineDone: false,
   reasonsDone: false,
   specialDone: false,
   giftDone: false,
@@ -236,6 +237,7 @@ function initScrollLocks() {
     { id: 'story',    check: () => unlockState.storyDone,    msg: "Hey idiot! Read the letters first! I didn't spend hours writing them for you to ignore! 😠💕", target: '#letters-grid' },
     { id: 'memories', check: () => unlockState.memoriesDone, msg: "Hello? Unveil all 6 photos before scrolling! I worked hard on those! 🙄", target: '#corkboard' },
     { id: 'hunt',     check: () => unlockState.huntDone,     msg: "You're not leaving until you find all 5 hidden hearts! Keep looking! 😤", target: '#hunt-arena' },
+    { id: 'timeline', check: () => unlockState.timelineDone, msg: "There's a secret date hidden here... try dragging the numbers! 🤫📅", target: '#timeline-lock' },
     { id: 'reasons',  check: () => unlockState.reasonsDone,  msg: "Tap the deck and see all the reasons I love you! Stop rushing! 🥊", target: '.deck-scene' },
     { id: 'special',  check: () => unlockState.specialDone,  msg: "Hold the heart to feel my heartbeat first... impatient much?! ❤️🥺", target: '.special-wrap' },
     { id: 'gift',     check: () => unlockState.giftDone,     msg: "Are you seriously scrolling past your gift? Open the damn box! 🎁😡", target: '#gift-scene' },
@@ -753,7 +755,7 @@ function initCardDeck() {
       document.getElementById('deck-tap-hint').innerHTML = '🎉 All revealed!';
       stack.style.cursor = 'default';
       unlockState.reasonsDone = true;
-      unlock(4); // Reasons discovery
+      unlock(5); // Reasons discovery
       SFX.sparkle();
     }
   };
@@ -841,18 +843,12 @@ function initHoldButton() {
   const completeHold = () => {
     done = true;
     unlockState.specialDone = true;
-    unlock(5); // Special discovery
+    unlock(6); // Special discovery
     cancelAnimationFrame(raf);
     btn.classList.remove('holding');
     btn.classList.add('complete');
     document.body.classList.remove('is-heartbeating');
     SFX.sparkle();
-
-    // Screen flash
-    gsap.fromTo(document.getElementById('special'),
-      { backgroundColor: 'rgba(255,107,157,.12)' },
-      { backgroundColor: 'transparent', duration: 1.2, ease: 'power2.out' }
-    );
 
     // Reward message
     const msg = document.createElement('div');
@@ -870,6 +866,109 @@ function initHoldButton() {
   btn.addEventListener('pointerup', stop);
   btn.addEventListener('pointerleave', stop);
   btn.addEventListener('pointercancel', stop);
+}
+
+/* ════════════════════════════════════════════════════════════
+   12. TIMELINE LOCK — Drag date digits (25 / 04 / 2015)
+   ════════════════════════════════════════════════════════════ */
+function initTimelineLock() {
+  const TARGET_DATE = [2, 5, 0, 4, 2, 0, 1, 5];
+  const pool = document.getElementById('num-pool');
+  const slots = document.querySelectorAll('.slot-box');
+  const reward = document.getElementById('timeline-reward');
+  const hintEl = document.getElementById('timeline-hint');
+  
+  if (!pool || !gsap.Draggable) return;
+
+  // Let them try for 15s before showing hint
+  setTimeout(() => { if (!unlockState.timelineDone) hintEl.removeAttribute('hidden'); }, 15000);
+
+  const filled = new Array(8).fill(null);
+  
+  // Digit pool (the necessary ones + some decoys)
+  const digits = [0, 0, 1, 2, 2, 3, 4, 5, 5, 6, 7, 8, 9].sort(() => Math.random() - 0.5);
+
+  digits.forEach((val, i) => {
+    const chip = document.createElement('div');
+    chip.className = 'num-chip';
+    chip.textContent = val;
+    pool.appendChild(chip);
+
+    // Initial floaty position
+    gsap.set(chip, { x: gsap.utils.random(-100, 100), y: gsap.utils.random(-20, 20) });
+    
+    // Float animation
+    gsap.to(chip, { 
+      y: '+=15', duration: 2 + Math.random() * 2, 
+      repeat: -1, yoyo: true, ease: 'sine.inOut', delay: Math.random() * 2 
+    });
+
+    Draggable.create(chip, {
+      type: 'x,y',
+      edgeResistance: 0.65,
+      onPress() {
+        gsap.killTweensOf(this.target);
+        this.target.style.zIndex = 50;
+        if (typeof SFX !== 'undefined' && SFX.click) SFX.click();
+      },
+      onRelease() {
+        this.target.style.zIndex = 10;
+        
+        let snapped = false;
+        slots.forEach((slot, idx) => {
+          if (this.hitTest(slot, '45%')) {
+            const digitValue = parseInt(this.target.textContent);
+            
+            if (digitValue === TARGET_DATE[idx] && !filled[idx]) {
+              snapped = true;
+              filled[idx] = true;
+              
+              const rect = slot.getBoundingClientRect();
+              const poolRect = pool.getBoundingClientRect();
+              const targetX = rect.left - poolRect.left + (rect.width - 55) / 2;
+              const targetY = rect.top - poolRect.top + (rect.height - 55) / 2;
+
+              this.disable();
+              this.target.classList.add('locked');
+              slot.classList.add('correct');
+              
+              gsap.to(this.target, { 
+                x: targetX, y: targetY, scale: 1.1, 
+                duration: 0.5, ease: 'back.out(2)' 
+              });
+
+              if (typeof SFX !== 'undefined' && SFX.pop) SFX.pop();
+              checkTimelineWin();
+            }
+          }
+        });
+
+        if (!snapped) {
+          gsap.to(this.target, { 
+            x: gsap.utils.random(-100, 100), y: gsap.utils.random(-20, 20),
+            duration: 0.6, ease: 'elastic.out(1, 0.5)'
+          });
+          gsap.to(this.target, { 
+            y: '+=15', duration: 2 + Math.random() * 2, 
+            repeat: -1, yoyo: true, ease: 'sine.inOut' 
+          });
+        }
+      }
+    });
+  });
+
+  function checkTimelineWin() {
+    if (filled.every(v => v === true)) {
+      unlockState.timelineDone = true;
+      unlock(4); // Timeline Discovery tracker
+      if (hintEl) hintEl.setAttribute('hidden', '');
+      reward.removeAttribute('hidden');
+      gsap.fromTo(reward, { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 1, ease: 'back.out(1.5)' });
+      fireConfetti();
+      setTimeout(fireConfetti, 400);
+      gsap.to('.num-chip:not(.locked)', { opacity: 0, y: 100, duration: 0.8, stagger: 0.05 });
+    }
+  }
 }
 
 
@@ -905,7 +1004,7 @@ function initGiftBox() {
         { opacity: 1, y: 0, scale: 1, duration: .9, ease: 'back.out(1.5)' }
       );
       unlockState.giftDone = true;
-      unlock(6); // Final gift discovery
+      unlock(7); // Final gift discovery
 
       // Auto-scroll to the text so the user sees it without manually scrolling
       setTimeout(() => reveal.scrollIntoView({ behavior: 'smooth', block: 'center' }), 200);
@@ -1168,6 +1267,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initStoryLetters();
   initMemoCards();
   initHeartHunt();
+  initTimelineLock();
   initCardDeck();
   initSpecialSection();
   initGiftBox();

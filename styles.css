@@ -2200,6 +2200,144 @@ button {
   }
 }
 
+/* ══ SECTION 4.5: TIMELINE DISCOVERY ────────────────────── */
+.section--timeline {
+  background: var(--bg-dark);
+}
+
+.timeline-lock {
+  perspective: 1000px;
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+  padding: 2rem 0;
+}
+
+.date-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 4rem;
+}
+
+.date-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.date-sep {
+  font-family: var(--ff-serif);
+  font-size: 2.5rem;
+  color: var(--pink);
+  opacity: 0.6;
+}
+
+.slot-box {
+  width: clamp(45px, 10vw, 65px);
+  height: clamp(65px, 15vw, 85px);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(255, 107, 157, 0.3);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease, border-color 0.4s ease;
+}
+
+.slot-box.correct {
+  background: rgba(255, 107, 157, 0.1);
+  border: 2px solid var(--pink);
+  box-shadow: 0 0 20px rgba(255, 107, 157, 0.3);
+}
+
+.num-pool {
+  position: relative;
+  min-height: 250px;
+  margin-top: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 1rem;
+}
+
+.num-chip {
+  width: 55px;
+  height: 55px;
+  background: var(--grad-card);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-family: var(--ff-serif);
+  color: white;
+  cursor: grab;
+  user-select: none;
+  box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+  z-index: 10;
+}
+
+.num-chip:active {
+  cursor: grabbing;
+}
+
+.num-chip.locked {
+  pointer-events: none;
+  background: var(--pink);
+  border-color: #ff9bb8;
+  box-shadow: 0 0 15px var(--pink);
+  z-index: 2;
+}
+
+.timeline-hint {
+  text-align: center;
+  margin-top: 2rem;
+  font-family: var(--ff-body);
+  color: var(--muted);
+  font-style: italic;
+  font-size: 0.95rem;
+  opacity: 0.8;
+  animation: fadePulse 3s infinite ease-in-out;
+}
+
+.timeline-reward {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  text-align: center;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.timeline-reward h3 {
+  font-family: var(--ff-serif);
+  font-size: 3.5rem;
+  color: var(--pink);
+  margin-bottom: 0.5rem;
+  text-shadow: 0 0 30px rgba(255, 107, 157, 0.6);
+}
+
+.timeline-reward p {
+  color: white;
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+@keyframes fadePulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.9; }
+}
+
+@media (max-width: 600px) {
+  .date-display { gap: 0.4rem; }
+  .date-sep { font-size: 1.5rem; }
+  .num-chip { width: 45px; height: 45px; font-size: 1.2rem; }
+}
+
 /* ─── MAD TOAST ─────────────────────────────────────────────── */
 .mad-toast {
   position: fixed;
