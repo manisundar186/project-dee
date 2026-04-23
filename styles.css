@@ -2229,8 +2229,9 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
+  gap: 0.5rem;
   margin-bottom: 4rem;
+  flex-wrap: wrap; /* Allow wrapping on tiny screens */
 }
 
 .date-group {
@@ -2246,8 +2247,8 @@ button {
 }
 
 .slot-box {
-  width: clamp(45px, 10vw, 65px);
-  height: clamp(65px, 15vw, 85px);
+  width: clamp(38px, 9vw, 65px);
+  height: clamp(55px, 13vw, 85px);
   background: rgba(255, 255, 255, 0.03);
   border: 1px dashed rgba(255, 107, 157, 0.3);
   border-radius: 12px;
@@ -2313,6 +2314,7 @@ button {
   border-color: #ff9bb8;
   box-shadow: 0 0 15px var(--pink);
   z-index: 2;
+  transform: translate(-50%, -50%) scale(0.85) !important; /* Nested feel */
 }
 
 .timeline-hint {
@@ -2338,10 +2340,11 @@ button {
 
 .timeline-reward h3 {
   font-family: var(--ff-serif);
-  font-size: 3.5rem;
+  font-size: clamp(2rem, 8vw, 3.5rem);
   color: var(--pink);
   margin-bottom: 0.5rem;
   text-shadow: 0 0 30px rgba(255, 107, 157, 0.6);
+  white-space: nowrap;
 }
 
 .timeline-reward p {
@@ -2356,9 +2359,17 @@ button {
 }
 
 @media (max-width: 600px) {
-  .date-display { gap: 0.4rem; }
-  .date-sep { font-size: 1.5rem; }
-  .num-chip { width: 45px; height: 45px; font-size: 1.2rem; }
+  .date-display { gap: 0.35rem; }
+  .date-sep { font-size: 1.2rem; }
+  .num-chip { width: 44px; height: 44px; font-size: 1.1rem; }
+  .slot-box { border-radius: 8px; }
+  .timeline-lock { padding: 1rem 0; }
+}
+
+@media (max-width: 380px) {
+  .date-display { gap: 0.2rem; }
+  .slot-box { width: 34px; height: 50px; }
+  .date-sep { display: none; } /* Hide slashes on ultra-small screens to save space */
 }
 
 /* ─── MAD TOAST ─────────────────────────────────────────────── */
