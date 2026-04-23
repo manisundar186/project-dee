@@ -61,10 +61,17 @@ img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
 }
 
 button {
   font-family: inherit;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 
 /* ─── SCROLL PROGRESS ───────────────────────────────────────── */
@@ -754,6 +761,9 @@ button {
   outline: none;
   position: relative;
   margin: 0 auto;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 
 .flip-card:focus-visible {
@@ -923,6 +933,8 @@ button {
   width: clamp(140px, 20vw, 200px);
   touch-action: none;
   user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
   z-index: 3;
   perspective: 800px;
   cursor: grab;
@@ -1224,6 +1236,9 @@ button {
   cursor: pointer;
   outline: none;
   flex-shrink: 0;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 
 .deck-stack:focus-visible {
