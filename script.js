@@ -38,6 +38,20 @@ window.onbeforeunload = () => {
 };
 window.scrollTo(0, 0);
 
+let _isRefreshing = false;
+
+/* ============================================================
+   RESIZE OBSERVER (KEEPS SCROLL TRIGGERS PERFECTLY ALIGNED)
+   ============================================================ */
+const ro = new ResizeObserver(() => {
+  if (window.ScrollTrigger) {
+    _isRefreshing = true;
+    ScrollTrigger.refresh();
+    setTimeout(() => { _isRefreshing = false; }, 100);
+  }
+});
+window.addEventListener('DOMContentLoaded', () => ro.observe(document.body));
+
 
 /* ════════════════════════════════════════════════════════════
    1. SOUND ENGINE  (Web Audio API)
@@ -219,45 +233,60 @@ function showMadToast(msg) {
 
 function initScrollLocks() {
   const sections = [
-    { id: 'story',    check: () => unlockState.storyDone,    msg: "Hey idiot! Read the letters first! I didn't spend hours writing them for you to ignore! 😠💕" },
-    { id: 'memories', check: () => unlockState.memoriesDone, msg: "Hello? Unveil all 6 photos before scrolling! I worked hard on those! 🙄" },
-    { id: 'hunt',     check: () => unlockState.huntDone,     msg: "You're not leaving until you find all 5 hidden hearts! Keep looking! 😤" },
-    { id: 'reasons',  check: () => unlockState.reasonsDone,  msg: "Tap the deck and see all the reasons I love you! Stop rushing! 🥊" },
-    { id: 'special',  check: () => unlockState.specialDone,  msg: "Hold the heart to feel my heartbeat first... impatient much?! ❤️🥺" },
-    { id: 'gift',     check: () => unlockState.giftDone,     msg: "Are you seriously scrolling past your gift? Open the damn box! 🎁😡" },
+    { id: 'story',    check: () => unlockState.storyDone,    msg: "Hey idiot! Read the letters first! I didn't spend hours writing them for you to ignore! 😠💕", target: '#letters-grid' },
+    { id: 'memories', check: () => unlockState.memoriesDone, msg: "Hello? Unveil all 6 photos before scrolling! I worked hard on those! 🙄", target: '#corkboard' },
+    { id: 'hunt',     check: () => unlockState.huntDone,     msg: "You're not leaving until you find all 5 hidden hearts! Keep looking! 😤", target: '#hunt-arena' },
+    { id: 'reasons',  check: () => unlockState.reasonsDone,  msg: "Tap the deck and see all the reasons I love you! Stop rushing! 🥊", target: '.deck-scene' },
+    { id: 'special',  check: () => unlockState.specialDone,  msg: "Hold the heart to feel my heartbeat first... impatient much?! ❤️🥺", target: '.special-wrap' },
+    { id: 'gift',     check: () => unlockState.giftDone,     msg: "Are you seriously scrolling past your gift? Open the damn box! 🎁😡", target: '#gift-scene' },
   ];
 
   let bounceTimeout;
-  sections.forEach(sec => {
-    ScrollTrigger.create({
-      trigger: `#${sec.id}`,
-      start: 'bottom 75%',
-      end: '+=99999',
-      onUpdate: (self) => {
-        if (self.progress > 0 && !sec.check()) {
-          // Instantly arrest downwards momentum
-          window.scrollTo({ top: self.start - 2, behavior: 'auto' });
+  const getNextBlock = () => {
+    return sections.find(s => !s.check());
+  };
+
+  ScrollTrigger.create({
+    start: 0,
+    end: 'max',
+    onUpdate: (self) => {
+      if (self.direction !== 1 || _isRefreshing) return;
+
+      const block = getNextBlock();
+      if (!block) return;
+
+      const el = document.getElementById(block.id);
+      if (!el) return;
+
+      const rect = el.getBoundingClientRect();
+      const bottomLimit = window.innerHeight * 0.92;
+
+      // Only block if we are actually trying to push PAST the bottom of the CURRENT uncompleted section
+      if (rect.bottom < bottomLimit) {
+        // Instantly arrest momentum
+        window.scrollTo({ top: window.scrollY - 15, behavior: 'auto' });
+
+        if (!document.documentElement.classList.contains('is-bouncing')) {
+          document.documentElement.classList.add('is-bouncing');
           
-          if (!document.documentElement.classList.contains('is-bouncing')) {
-            document.documentElement.classList.add('is-bouncing');
-            
-            const el = document.getElementById(sec.id);
-            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            
-            let toastEl = document.getElementById('mad-toast');
-            if (!toastEl || !toastEl.classList.contains('show')) {
-              showMadToast(sec.msg);
-            }
-            
-            clearTimeout(bounceTimeout);
-            bounceTimeout = setTimeout(() => {
-              document.documentElement.classList.remove('is-bouncing');
-            }, 800);
-          }
+          // PINPOINT CENTERING
+          const centerEl = document.querySelector(block.target) || el;
+          centerEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          
+          showMadToast(block.msg);
+
+          clearTimeout(bounceTimeout);
+          bounceTimeout = setTimeout(() => {
+            document.documentElement.classList.remove('is-bouncing');
+          }, 1200);
         }
       }
-    });
+    }
   });
+}
+
+function toastok(toastEl) {
+    return toastEl && toastEl.classList.contains('show');
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -724,6 +753,7 @@ function initCardDeck() {
       document.getElementById('deck-tap-hint').innerHTML = '🎉 All revealed!';
       stack.style.cursor = 'default';
       unlockState.reasonsDone = true;
+      unlock(4); // Reasons discovery
       SFX.sparkle();
     }
   };
@@ -811,6 +841,7 @@ function initHoldButton() {
   const completeHold = () => {
     done = true;
     unlockState.specialDone = true;
+    unlock(5); // Special discovery
     cancelAnimationFrame(raf);
     btn.classList.remove('holding');
     btn.classList.add('complete');
@@ -874,7 +905,7 @@ function initGiftBox() {
         { opacity: 1, y: 0, scale: 1, duration: .9, ease: 'back.out(1.5)' }
       );
       unlockState.giftDone = true;
-      unlock(4);
+      unlock(6); // Final gift discovery
 
       // Auto-scroll to the text so the user sees it without manually scrolling
       setTimeout(() => reveal.scrollIntoView({ behavior: 'smooth', block: 'center' }), 200);
