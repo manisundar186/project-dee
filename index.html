@@ -224,10 +224,15 @@
         <div class="section-header text-center" data-sa="fade-up">
           <div class="section-badge">Captured Moments</div>
           <h2 class="section-title">Our Memory Board</h2>
-          <p class="section-sub">Double-tap to reveal their secrets 🤫</p>
+          <p class="section-sub">Guess the photo! Double-tap to reveal if you're right 🤫</p>
         </div>
 
         <div id="corkboard" role="region" aria-label="Draggable memory board">
+
+          <!-- Board note -->
+          <div class="board-note" id="board-note" aria-hidden="true">
+            <p>Guess what photo it is before double-tapping! ✨</p>
+          </div>
 
           <!-- 6 Draggable, flippable memory cards -->
           <div class="memo-card" id="mc-0" data-cx="5" data-cy="8" data-cr="-3" role="img" aria-label="Memory photo 1">
