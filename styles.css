@@ -1,5 +1,5 @@
 /* ============================================================
-   BIRTHDAY SURPRISE v2 — Interactive Edition
+   12th ANNIVERSARY SURPRISE v2 — Interactive Edition
    styles.css
    ============================================================ */
 
@@ -147,7 +147,7 @@ button { font-family:inherit; }
 }
 .lightbox.open { opacity:1; pointer-events:auto; }
 .lightbox-inner { max-width:min(90vw,860px); width:100%; text-align:center; }
-.lightbox-inner img { max-height:72vh; object-fit:contain; border-radius:14px; box-shadow:0 30px 90px rgba(255,107,157,.22); }
+.lightbox-inner img { width:auto; height:auto; max-width:100%; max-height:72vh; display:inline-block; object-fit:contain; border-radius:14px; box-shadow:0 30px 90px rgba(255,107,157,.22); }
 .lightbox-caption { font-family:var(--ff-hand); font-size:clamp(1rem,2.5vw,1.4rem); color:var(--muted); margin-top:1.2rem; }
 .lightbox-close {
   position:fixed; top:20px; right:24px;
@@ -395,10 +395,14 @@ button { font-family:inherit; }
 
 /* 3-D flip card */
 .flip-card {
-  width:200px; height:240px;
-  perspective:900px;
-  cursor:pointer; outline:none;
-  position:relative;
+  width: 100%;
+  max-width: 220px;
+  aspect-ratio: 5 / 6.5;
+  height: auto;
+  perspective: 900px;
+  cursor: pointer; outline: none;
+  position: relative;
+  margin: 0 auto;
 }
 .flip-card:focus-visible { outline:2px dashed var(--pink); outline-offset:6px; border-radius:8px; }
 
@@ -420,16 +424,17 @@ button { font-family:inherit; }
 .flip-front:hover { box-shadow:0 12px 50px rgba(255,107,157,.2); }
 
 .env-flap {
-  flex-shrink:0;
-  height:80px;
-  background:linear-gradient(135deg,#1e0035,#2a0045);
-  clip-path:polygon(0 0,100% 0,50% 100%);
-  border-bottom:1px solid var(--border);
+  flex-shrink: 0;
+  height: 38%;
+  background: linear-gradient(135deg,#1e0035,#2a0045);
+  clip-path: polygon(0 0,100% 0,50% 100%);
+  border-bottom: 1px solid var(--border);
 }
 .env-body {
-  flex:1; display:flex; flex-direction:column;
-  align-items:center; justify-content:center; gap:.75rem;
-  padding:.5rem;
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: flex-start; gap: clamp(0.3rem, 2vw, 0.75rem);
+  padding: 0.5rem;
+  overflow: hidden;
 }
 .env-seal {
   font-size:1.6rem;
@@ -447,12 +452,13 @@ button { font-family:inherit; }
 
 /* Back — letter */
 .flip-back {
-  background:linear-gradient(135deg,#1a0030,#0e0020);
-  border:1px solid var(--border-m);
-  transform:rotateY(180deg);
-  display:flex; align-items:center; justify-content:center;
-  padding:1.5rem;
-  box-shadow:0 8px 40px rgba(0,0,0,.5);
+  background: linear-gradient(135deg,#1a0030,#0e0020);
+  border: 1px solid var(--border-m);
+  transform: rotateY(180deg);
+  display: flex; align-items: center; justify-content: center;
+  padding: clamp(0.8rem, 4vw, 1.5rem);
+  box-shadow: 0 8px 40px rgba(0,0,0,.5);
+  overflow-y: auto;
 }
 .letter-text {
   font-family:var(--ff-hand);
@@ -952,8 +958,7 @@ button { font-family:inherit; }
   .gift-reveal .gift-msg br { display:none; }
 }
 @media (max-width:400px) {
-  .letters-grid { grid-template-columns:1fr 1fr; }
-  .flip-card { width:clamp(140px,40vw,180px); height:clamp(170px,50vw,210px); }
+  .letters-grid { grid-template-columns: 1fr 1fr; gap: 0.8rem; }
   .section { padding:60px 0; }
 }
 @media (min-width:1400px) {

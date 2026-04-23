@@ -1,5 +1,5 @@
 /* ============================================================
-   BIRTHDAY SURPRISE v2 — Interactive Edition
+   12th ANNIVERSARY SURPRISE v2 — Interactive Edition
    script.js
 
    Structure:
@@ -28,6 +28,15 @@
    ============================================================ */
 
 gsap.registerPlugin(ScrollTrigger, TextPlugin);
+
+// Prevent browser from saving scroll position on refresh
+if (history.scrollRestoration) {
+  history.scrollRestoration = 'manual';
+}
+window.onbeforeunload = () => {
+  window.scrollTo(0, 0);
+};
+window.scrollTo(0, 0);
 
 
 /* ════════════════════════════════════════════════════════════
@@ -197,6 +206,13 @@ function initEntryGate() {
   const exp    = document.getElementById('experience');
   const ptcEl  = document.getElementById('entry-particles');
 
+  // Disable scroll until the gate is opened
+  document.body.style.overflow = 'hidden';
+  document.documentElement.style.overflow = 'hidden';
+  window.scrollTo(0, 0);
+  setTimeout(() => window.scrollTo(0, 0), 30);
+  setTimeout(() => window.scrollTo(0, 0), 100);
+
   // Spawn ambient particles
   const syms = ['✨','💫','⭐','🌸','💖','❤️','🌟','💕'];
   for (let i = 0; i < 18; i++) {
@@ -230,6 +246,8 @@ function initEntryGate() {
       .add(() => {
         gate.classList.add('dismissed');
         exp.classList.add('unlocked');
+        document.body.style.overflow = ''; // Re-enable scroll
+        document.documentElement.style.overflow = '';
         unlock(0);
         setTimeout(() => { SFX.unlock(); playHeroTimeline(); }, 50);
       });
@@ -463,9 +481,15 @@ function initMemoCards() {
       if (!moved) {
         const now = Date.now();
         if (now - lastTap < 380) {
-          // Double-tap → flip
-          card.classList.toggle('flipped');
-          SFX.flip();
+          // Double-tap
+          const imgSrc = card.querySelector('.memo-front img').src;
+          const captionHTML = card.querySelector('.memo-back p').innerHTML;
+          if (window.openLightbox) {
+            window.openLightbox(imgSrc, captionHTML);
+          } else {
+            card.classList.toggle('flipped');
+            SFX.flip();
+          }
           gsap.fromTo(card, { scale: 1 }, { scale: 1.1, duration: .15, yoyo: true, repeat: 1 });
         }
         lastTap = now;
@@ -762,6 +786,9 @@ function initGiftBox() {
         { opacity: 1, y: 0,  scale: 1,  duration: .9, ease: 'back.out(1.5)' }
       );
       unlock(4);
+      
+      // Auto-scroll to the text so the user sees it without manually scrolling
+      setTimeout(() => reveal.scrollIntoView({ behavior: 'smooth', block: 'center' }), 200);
     }, 780);
   };
 
@@ -904,7 +931,7 @@ function initShare() {
 
   btn.addEventListener('click', async () => {
     gsap.fromTo(btn, { scale:1 }, { scale:.93, duration:.1, yoyo:true, repeat:1 });
-    const shareData = { title:'Happy Birthday! ❤️', url: window.location.href };
+    const shareData = { title:'Happy 12th Anniversary! ❤️', url: window.location.href };
     if (navigator.share && navigator.canShare?.(shareData)) {
       try { await navigator.share(shareData); } catch (_) {}
       return;
@@ -969,7 +996,36 @@ function initEasterEgg() {
 
 
 /* ════════════════════════════════════════════════════════════
-   21. TOUCH — tap burst for mobile
+   22. LIGHTBOX
+   ════════════════════════════════════════════════════════════ */
+function initLightbox() {
+  const lightbox = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lightbox-img');
+  const lbCaption = document.getElementById('lightbox-caption');
+  const lbClose = document.getElementById('lightbox-close');
+  if (!lightbox) return;
+
+  const closeLb = () => {
+    lightbox.classList.remove('open');
+    if (typeof SFX !== 'undefined' && SFX.drop) SFX.drop();
+  };
+
+  lbClose.addEventListener('click', closeLb);
+  lightbox.addEventListener('click', e => {
+    if (e.target === lightbox) closeLb();
+  });
+
+  window.openLightbox = (src, captionHtml) => {
+    lbImg.src = src;
+    lbCaption.innerHTML = captionHtml;
+    lightbox.classList.add('open');
+    if (typeof SFX !== 'undefined' && SFX.sparkle) SFX.sparkle();
+  };
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   23. TOUCH — tap burst for mobile
    ════════════════════════════════════════════════════════════ */
 function initTouchBurst() {
   document.addEventListener('touchend', e => {
@@ -1002,4 +1058,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initEditableName();
   initShare();
   initEasterEgg();
+  initLightbox();
 });
