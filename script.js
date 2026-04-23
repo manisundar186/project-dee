@@ -632,16 +632,16 @@ function initHeartHunt() {
       spawnBurst(r.left + r.width / 2, r.top + r.height / 2, ['❤️', '💕', '💖'], 10);
 
       if (found >= TOTAL) {
-        setTimeout(showHuntReward, 600);
+        unlockState.huntDone = true;
+        unlock(3); // hearts discovery - Instant unlock for scrollgate
+        setTimeout(showHuntReward, 450);
       }
     });
   });
 
   function showHuntReward() {
-    unlockState.huntDone = true;
     reward.removeAttribute('hidden');
     reward.classList.add('visible');
-    unlock(3); // hearts discovery
     SFX.unlock();
     fireConfetti(); setTimeout(() => fireConfetti('l'), 300); setTimeout(() => fireConfetti('r'), 500);
     gsap.fromTo(reward,
@@ -847,8 +847,8 @@ function initTimelineLock() {
 
   const filled = new Array(8).fill(null);
 
-  // Digit pool (the necessary ones + some decoys)
-  const digits = [0, 0, 1, 2, 2, 3, 4, 5, 5, 6, 7, 8, 9].sort(() => Math.random() - 0.5);
+  // Digit pool (All required ones + extra decoys to make it feel like a discovery)
+  const digits = [0, 0, 0, 1, 1, 2, 2, 2, 3, 3, 4, 4, 5, 5, 5, 6, 7, 8, 9].sort(() => Math.random() - 0.5);
 
   digits.forEach((val, i) => {
     const chip = document.createElement('div');
@@ -856,9 +856,9 @@ function initTimelineLock() {
     chip.textContent = val;
     pool.appendChild(chip);
 
-    // Initial floaty position within the pool area (narrowed for mobile safety)
+    // Initial floaty position (using vw to ensure safety on all screen widths)
     gsap.set(chip, {
-      x: gsap.utils.random(-110, 110),
+      x: gsap.utils.random(-35, 35) + 'vw', 
       y: gsap.utils.random(-25, 25),
       scale: 0,
       opacity: 0
@@ -927,7 +927,8 @@ function initTimelineLock() {
 
         if (!snapped) {
           gsap.to(this.target, {
-            x: gsap.utils.random(-100, 100), y: gsap.utils.random(-25, 25),
+            x: gsap.utils.random(-35, 35) + 'vw', 
+            y: gsap.utils.random(-25, 25),
             duration: 0.6, ease: 'elastic.out(1, 0.5)'
           });
           gsap.to(this.target, {
@@ -975,6 +976,9 @@ function initGiftBox() {
     SFX.gift();
     gsap.to('#gift-scene', { scale: 1.07, duration: .15, yoyo: true, repeat: 1 });
 
+    unlockState.giftDone = true;
+    unlock(7); // Final gift discovery - Instant unlock for scrollgate
+    
     setTimeout(fireConfetti, 380);
     setTimeout(() => fireConfetti('l'), 550);
     setTimeout(() => fireConfetti('r'), 720);
@@ -985,8 +989,6 @@ function initGiftBox() {
         { opacity: 0, y: 40, scale: .87 },
         { opacity: 1, y: 0, scale: 1, duration: .9, ease: 'back.out(1.5)' }
       );
-      unlockState.giftDone = true;
-      unlock(7); // Final gift discovery
 
       // Auto-scroll to the text so the user sees it without manually scrolling
       setTimeout(() => reveal.scrollIntoView({ behavior: 'smooth', block: 'center' }), 200);
