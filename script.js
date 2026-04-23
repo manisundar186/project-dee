@@ -249,7 +249,11 @@ function initEntryGate() {
         document.body.style.overflow = ''; // Re-enable scroll
         document.documentElement.style.overflow = '';
         unlock(0);
-        setTimeout(() => { SFX.unlock(); playHeroTimeline(); }, 50);
+        setTimeout(() => { 
+          ScrollTrigger.refresh(); 
+          SFX.unlock && SFX.unlock(); 
+          playHeroTimeline(); 
+        }, 50);
       });
 
     // Burst of hearts from click point
@@ -846,11 +850,7 @@ function initScrollAnimations() {
     duration: .8, ease: 'back.out(1.4)', stagger: .12,
   });
 
-  // Hunt header
-  gsap.from('.hunt-header', {
-    scrollTrigger: { trigger:'#hunt', start:'top 80%', toggleActions:'play none none none' },
-    opacity: 0, y: 50, duration: 1, ease: 'power3.out',
-  });
+  // (hunt header handled by generic fade-up)
 
   // (reasons header handled by generic fade-up above)
 }
