@@ -852,18 +852,24 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: clamp(0.8rem, 4vw, 1.5rem);
+  padding: clamp(1rem, 4vw, 1.8rem);
   box-shadow: 0 8px 40px rgba(0, 0, 0, .5);
   overflow-y: auto;
+  scrollbar-width: none; /* Hide scrollbar but keep functionality */
+}
+
+.flip-back::-webkit-scrollbar {
+  display: none;
 }
 
 .letter-text {
-  font-family: var(--ff-hand);
-  font-size: clamp(.95rem, 2vw, 1.1rem);
-  line-height: 1.75;
+  font-family: var(--ff-body);
+  font-size: clamp(.85rem, 1.8vw, .95rem);
+  line-height: 1.55;
   color: var(--text);
-  text-align: center;
+  text-align: left;
   margin: 0;
+  font-weight: 400;
 }
 
 /* Opened state — flip to back */
