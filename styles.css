@@ -54,7 +54,7 @@ body {
   color: var(--text);
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
-  
+
   /* Prevent text selection site-wide for app-like feeling */
   user-select: none;
   -webkit-user-select: none;
@@ -63,7 +63,16 @@ body {
 }
 
 /* Ensure images and emojis aren't draggable */
-img, .emoji, span, p, h1, h2, h3, h4, h5, h6 {
+img,
+.emoji,
+span,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   -webkit-user-drag: none;
   user-drag: none;
 }
@@ -118,6 +127,7 @@ button {
 .tracker:hover {
   opacity: 1;
 }
+
 /* ─── DISCOVERY TRACKER ─────────────────────────────────────── */
 .tracker-wrap {
   position: fixed;
@@ -855,7 +865,8 @@ button {
   padding: clamp(1rem, 4vw, 1.8rem);
   box-shadow: 0 8px 40px rgba(0, 0, 0, .5);
   overflow-y: auto;
-  scrollbar-width: none; /* Hide scrollbar but keep functionality */
+  scrollbar-width: none;
+  /* Hide scrollbar but keep functionality */
 }
 
 .flip-back::-webkit-scrollbar {
@@ -863,13 +874,15 @@ button {
 }
 
 .letter-text {
-  font-family: var(--ff-body);
-  font-size: clamp(.85rem, 1.8vw, .95rem);
-  line-height: 1.55;
+  font-family: var(--ff-serif);
+  font-size: clamp(.85rem, 1.8vw, 1.05rem);
+  line-height: 1.5;
   color: var(--text);
   text-align: left;
   margin: 0;
   font-weight: 400;
+  font-style: italic;
+  /* Added italic for a more classic letter feel */
 }
 
 /* Opened state — flip to back */
@@ -951,12 +964,10 @@ button {
   -webkit-touch-callout: none;
   z-index: 3;
   perspective: 800px;
-  cursor: grab;
 }
 
 .memo-card:active,
 .memo-card.dragging {
-  cursor: grabbing;
   z-index: 20;
 }
 
@@ -983,36 +994,52 @@ button {
 }
 
 .memo-front {
-  background:#f5f0e8;
-  box-shadow:3px 4px 16px rgba(0,0,0,.5), 0 1px 0 rgba(255,255,255,.1);
+  background: #f5f0e8;
+  box-shadow: 3px 4px 16px rgba(0, 0, 0, .5), 0 1px 0 rgba(255, 255, 255, .1);
 }
-.memo-front img { 
-  border-radius:2px; 
+
+.memo-front img {
+  border-radius: 2px;
   filter: blur(8px) contrast(1.1) brightness(0.9);
   transform: scale(1.15);
   transition: filter 0.6s ease, transform 0.6s ease;
 }
+
 .memo-card.revealed .memo-front img {
   filter: blur(0) contrast(1) brightness(1);
   transform: scale(1);
 }
+
 .memo-card.revealed .memo-front::after {
   content: '✓';
   position: absolute;
-  bottom: 8px; right: 8px;
-  width: 24px; height: 24px;
+  bottom: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
   background: var(--pink);
   color: white;
   border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 14px; font-weight: bold;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
   animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
   z-index: 5;
 }
+
 @keyframes popIn {
-  from { transform: scale(0); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .memo-back {
@@ -2225,6 +2252,20 @@ button {
   margin: 0 auto;
   position: relative;
   padding: 2rem 0;
+  min-height: 400px; /* Balanced height */
+}
+
+.timeline-stage {
+  display: grid;
+  place-items: center;
+  grid-template-areas: "stack";
+  margin-top: 4.5rem;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.date-display, .timeline-reward {
+  grid-area: stack;
 }
 
 .date-display {
@@ -2232,8 +2273,8 @@ button {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  margin-bottom: 4rem;
-  flex-wrap: wrap; /* Allow wrapping on tiny screens */
+  margin-bottom: 0; /* Margin-bottom moved to stage */
+  flex-wrap: wrap; 
 }
 
 .date-group {
@@ -2272,7 +2313,8 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative; /* Core for absolute chips */
+  position: relative;
+  /* Core for absolute chips */
   transition: background 0.3s ease, border-color 0.4s ease;
 }
 
@@ -2294,14 +2336,13 @@ button {
   position: relative;
   min-height: 250px;
   margin-top: 2rem;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1.5rem;
-  padding: 1rem;
+  width: 100%;
 }
 
 .num-chip {
+  position: absolute;
+  top: 50%;
+  left: 50%;
   width: clamp(50px, 8vw, 60px);
   height: clamp(50px, 8vw, 60px);
   background: var(--grad-card);
@@ -2316,7 +2357,7 @@ button {
   color: white;
   cursor: grab;
   user-select: none;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
   z-index: 20;
   transition: border-color 0.3s;
 }
@@ -2331,7 +2372,8 @@ button {
   border-color: #ff9bb8;
   box-shadow: 0 0 15px var(--pink);
   z-index: 2;
-  transform: translate(-50%, -50%) scale(0.85) !important; /* Nested feel */
+  transform: translate(-50%, -50%) scale(0.85) !important;
+  /* Nested feel */
 }
 
 .timeline-hint {
@@ -2346,10 +2388,7 @@ button {
 }
 
 .timeline-reward {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100%;
+  position: relative; /* Changed from absolute to participative flow */
   text-align: center;
   z-index: 100;
   pointer-events: none;
@@ -2371,31 +2410,89 @@ button {
 }
 
 @keyframes fadePulse {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 0.9; }
+
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+
+  50% {
+    opacity: 0.9;
+  }
 }
 
 @media (max-width: 600px) {
-  .date-display { gap: 0.35rem; }
-  .date-sep { font-size: 1.2rem; margin: 0 2px; }
-  .num-chip { width: 44px; height: 44px; font-size: 1.1rem; }
-  .slot-box { border-radius: 8px; }
-  .timeline-lock { padding: 1.5rem 0.5rem; }
-  .section--timeline .container { padding-left: 10px; padding-right: 10px; }
+  .timeline-stage {
+    margin-top: 4.5rem !important;
+  }
+  
+  .date-display { 
+    flex-direction: column; 
+    gap: 1.2rem !important; 
+    margin-top: 0 !important;
+    margin-bottom: 0px;
+  }
+
+  .date-sep {
+    display: none !important;
+  }
+
+  /* Base Size for ALL boxes on mobile */
+  .slot-box {
+    width: 60px !important;
+    height: 80px !important;
+    min-width: 60px !important;
+  }
+
+  /* Override Top Row: Date (Extra Big) */
+  .date-group:nth-of-type(1) .slot-box {
+    width: 80px !important;
+    height: 100px !important;
+    min-width: 80px !important;
+  }
+
+  .num-chip {
+    width: 50px;
+    height: 50px;
+    font-size: 1.25rem;
+  }
+
+  .timeline-lock {
+    padding: 1.5rem 0.5rem;
+  }
+
+  .section--timeline .container {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
 }
 
 @media (max-width: 380px) {
-  .date-display { gap: 0.25rem; }
-  .slot-box { width: clamp(32px, 8.5vw, 40px); height: 55px; }
-  .date-sep { font-size: 1rem; margin: 0 1px; display: block; }
-  .num-chip { width: 38px; height: 38px; font-size: 1rem; }
+  .date-group:nth-of-type(1) .slot-box {
+    width: 62px;
+    height: 82px;
+  }
+
+  .date-group:nth-of-type(2) .slot-box,
+  .date-group:nth-of-type(3) .slot-box {
+    width: 52px;
+    height: 72px;
+  }
+
+  .num-chip {
+    width: 42px;
+    height: 42px;
+    font-size: 1.1rem;
+  }
 }
 
 /* ─── MAD TOAST ─────────────────────────────────────────────── */
 .mad-toast {
   position: fixed;
-  top: 80px; left: 50%;
-  transform: translate(-50%, -100px); /* hidden */
+  top: 80px;
+  left: 50%;
+  transform: translate(-50%, -100px);
+  /* hidden */
   background: rgba(220, 20, 60, 0.95);
   color: white;
   padding: 1.2rem 2rem;
@@ -2413,6 +2510,7 @@ button {
   transition: transform 0.4s var(--ease-spring), opacity 0.4s ease;
   pointer-events: none;
 }
+
 .mad-toast.show {
   transform: translate(-50%, 0);
   opacity: 1;

@@ -870,10 +870,10 @@ function initTimelineLock() {
     chip.textContent = val;
     pool.appendChild(chip);
 
-    // Initial floaty position (using vw to ensure safety on all screen widths)
+    // Initial fixed floaty position (absolute positioning prevents sibling shifts)
     gsap.set(chip, {
-      x: gsap.utils.random(-35, 35) + 'vw', 
-      y: gsap.utils.random(-25, 25),
+      x: gsap.utils.random(-40, 40) + 'vw', 
+      y: gsap.utils.random(-60, 60),
       scale: 0,
       opacity: 0
     });
@@ -957,13 +957,27 @@ function initTimelineLock() {
   function checkTimelineWin() {
     if (filled.every(v => v === true)) {
       unlockState.timelineDone = true;
-      unlock(4); // Timeline Discovery tracker
+      unlock(4);
       if (hintEl) hintEl.setAttribute('hidden', '');
-      reward.removeAttribute('hidden');
-      gsap.fromTo(reward, { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 1, ease: 'back.out(1.5)' });
-      fireConfetti();
-      setTimeout(fireConfetti, 400);
-      gsap.to('.num-chip:not(.locked)', { opacity: 0, y: 100, duration: 0.8, stagger: 0.05 });
+
+      // Fade out the interactive elements
+      gsap.to(['.date-display', '.num-pool'], {
+        opacity: 0,
+        y: -20,
+        duration: 0.8,
+        ease: 'power2.inOut',
+        onComplete: () => {
+          document.querySelector('.date-display').style.display = 'none';
+          document.querySelector('.num-pool').style.display = 'none';
+          reward.removeAttribute('hidden');
+          gsap.fromTo(reward, 
+            { opacity: 0, scale: 0.8 }, 
+            { opacity: 1, scale: 1, duration: 1, ease: 'back.out(1.5)' }
+          );
+          fireConfetti();
+          setTimeout(fireConfetti, 400);
+        }
+      });
     }
   }
 }
