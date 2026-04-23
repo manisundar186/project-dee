@@ -227,15 +227,33 @@ function initScrollLocks() {
     { id: 'gift',     check: () => unlockState.giftDone,     msg: "Are you seriously scrolling past your gift? Open the damn box! 🎁😡" },
   ];
 
+  let bounceTimeout;
   sections.forEach(sec => {
     ScrollTrigger.create({
       trigger: `#${sec.id}`,
-      start: 'bottom 85%',
-      onEnter: () => {
-        if (!sec.check()) {
-          const el = document.getElementById(sec.id);
-          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          showMadToast(sec.msg);
+      start: 'bottom 75%',
+      end: '+=99999',
+      onUpdate: (self) => {
+        if (self.progress > 0 && !sec.check()) {
+          // Instantly arrest downwards momentum
+          window.scrollTo({ top: self.start - 2, behavior: 'auto' });
+          
+          if (!document.documentElement.classList.contains('is-bouncing')) {
+            document.documentElement.classList.add('is-bouncing');
+            
+            const el = document.getElementById(sec.id);
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            let toastEl = document.getElementById('mad-toast');
+            if (!toastEl || !toastEl.classList.contains('show')) {
+              showMadToast(sec.msg);
+            }
+            
+            clearTimeout(bounceTimeout);
+            bounceTimeout = setTimeout(() => {
+              document.documentElement.classList.remove('is-bouncing');
+            }, 800);
+          }
         }
       }
     });
