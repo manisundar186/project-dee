@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Birthday ❤️</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&family=Dancing+Script:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ─── CURSOR ────────────────────────────────────────────── -->
+  <div id="cursor-dot"   class="cursor-dot"   aria-hidden="true"></div>
+  <div id="cursor-outer" class="cursor-outer" aria-hidden="true"></div>
+
+  <!-- ─── SCROLL PROGRESS ───────────────────────────────────── -->
+  <div id="scroll-progress"></div>
+
+  <!-- ─── MUSIC TOGGLE ──────────────────────────────────────── -->
+  <button id="music-toggle" class="music-btn" aria-label="Toggle music">
+    <span class="music-on">🎵</span>
+    <span class="music-off" hidden>🔇</span>
+  </button>
+
+  <!-- ─── DISCOVERY TRACKER (floating) ──────────────────────── -->
+  <div id="tracker" class="tracker" aria-label="Discovery tracker">
+    <span class="tracker-label">✨ Discoveries</span>
+    <div class="tracker-dots">
+      <span class="tdot" data-i="0" title="Entry"></span>
+      <span class="tdot" data-i="1" title="Stories"></span>
+      <span class="tdot" data-i="2" title="Memories"></span>
+      <span class="tdot" data-i="3" title="Hearts"></span>
+      <span class="tdot" data-i="4" title="Gift"></span>
+    </div>
+  </div>
+
+  <!-- ─── AUDIO ─────────────────────────────────────────────── -->
+  <audio id="bg-music" loop>
+    <source src="audio/background.mp3" type="audio/mpeg" />
+  </audio>
+
+  <!-- ─── GLOBAL FLOATING LAYER ─────────────────────────────── -->
+  <div id="floating-layer" aria-hidden="true"></div>
+
+  <!-- ─── LIGHTBOX ──────────────────────────────────────────── -->
+  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true">
+    <button id="lightbox-close" class="lightbox-close" aria-label="Close">✕</button>
+    <div class="lightbox-inner">
+      <img id="lightbox-img" src="" alt="" />
+      <p id="lightbox-caption" class="lightbox-caption"></p>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════
+       ENTRY GATE — user must click to begin
+  ══════════════════════════════════════════════════════════════ -->
+  <div id="entry-gate">
+    <div class="entry-particles" id="entry-particles" aria-hidden="true"></div>
+
+    <div class="entry-content">
+      <div class="entry-portal" id="entry-portal" role="button" tabindex="0" aria-label="Click to open your birthday surprise">
+        <div class="portal-ring pr-1" aria-hidden="true"></div>
+        <div class="portal-ring pr-2" aria-hidden="true"></div>
+        <div class="portal-ring pr-3" aria-hidden="true"></div>
+        <div class="portal-core">
+          <span class="portal-emoji" id="portal-emoji">🎁</span>
+          <div class="portal-pulse" aria-hidden="true"></div>
+        </div>
+      </div>
+
+      <div class="entry-text">
+        <p class="entry-tagline">Something magical is waiting for you…</p>
+        <p class="entry-cta">
+          <span class="entry-click">Click to open</span>
+          <span class="entry-cursor-blink">|</span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════
+       MAIN EXPERIENCE (revealed after entry click)
+  ══════════════════════════════════════════════════════════════ -->
+  <div id="experience" class="experience-locked">
+
+
+    <!-- ══ SECTION 1: HERO ══════════════════════════════════ -->
+    <section id="hero" class="section section--hero">
+      <canvas id="hero-canvas" aria-hidden="true"></canvas>
+      <div class="container h-100">
+        <div class="hero-content">
+          <p class="hero-pre" id="hero-pre">✨ a little something, just for you ✨</p>
+          <h1 class="hero-title" id="hero-title">
+            Hey&nbsp;<span class="hero-name gradient-text" id="hero-name"
+              contenteditable="false" spellcheck="false">Jamilah</span><button
+              class="name-edit-btn" id="name-edit-btn" title="Personalise name"
+              aria-label="Edit name">✏️</button>&nbsp;❤️
+          </h1>
+          <p class="hero-sub" id="hero-sub">I made something special for you…</p>
+
+          <!-- Hidden Easter egg star -->
+          <button class="easter-star" id="hero-star" aria-label="Hidden surprise">⭐</button>
+
+          <div class="hero-cta" id="hero-cta">
+            <span>Scroll to explore</span>
+            <div class="cta-chevrons"><span></span><span></span><span></span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ══ SECTION 2: STORY LETTERS ═════════════════════════ -->
+    <section id="story" class="section section--story">
+      <div class="section-bg-orbs" aria-hidden="true">
+        <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+      </div>
+      <div class="container">
+        <div class="story-header" data-sa="fade-up">
+          <div class="section-badge">Our Story</div>
+          <h2 class="section-title">Four letters, sealed with love</h2>
+          <p class="section-sub">Click each envelope to read it…</p>
+        </div>
+
+        <div class="letters-grid" id="letters-grid">
+
+          <div class="letter-wrap" data-sa="letter">
+            <div class="flip-card" id="letter-0" data-open="false" role="button" tabindex="0" aria-label="Open letter: The Beginning">
+              <div class="flip-front">
+                <div class="env-flap"></div>
+                <div class="env-body">
+                  <div class="env-seal">💌</div>
+                  <span class="env-icon" aria-hidden="true">🌙</span>
+                </div>
+                <div class="env-label">The Beginning</div>
+              </div>
+              <div class="flip-back">
+                <p class="letter-text">From the moment we met, something shifted in my universe. There was a warmth I hadn't felt before — a kind of quiet magic that only you bring.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="letter-wrap" data-sa="letter">
+            <div class="flip-card" id="letter-1" data-open="false" role="button" tabindex="0" aria-label="Open letter: What You Do">
+              <div class="flip-front">
+                <div class="env-flap"></div>
+                <div class="env-body">
+                  <div class="env-seal">💌</div>
+                  <span class="env-icon" aria-hidden="true">🌸</span>
+                </div>
+                <div class="env-label">What You Do</div>
+              </div>
+              <div class="flip-back">
+                <p class="letter-text">You made my world better simply by being in it. The way you laugh, the way you care, the way you see beauty in ordinary things — it all changed me.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="letter-wrap" data-sa="letter">
+            <div class="flip-card" id="letter-2" data-open="false" role="button" tabindex="0" aria-label="Open letter: Every Day">
+              <div class="flip-front">
+                <div class="env-flap"></div>
+                <div class="env-body">
+                  <div class="env-seal">💌</div>
+                  <span class="env-icon" aria-hidden="true">⭐</span>
+                </div>
+                <div class="env-label">Every Day</div>
+              </div>
+              <div class="flip-back">
+                <p class="letter-text">Every single day, I wake up grateful that our paths crossed. You are not just someone I love — you are someone who made me want to be better.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="letter-wrap" data-sa="letter">
+            <div class="flip-card" id="letter-3" data-open="false" role="button" tabindex="0" aria-label="Open letter: Today and Always">
+              <div class="flip-front">
+                <div class="env-flap"></div>
+                <div class="env-body">
+                  <div class="env-seal">💌</div>
+                  <span class="env-icon" aria-hidden="true">💫</span>
+                </div>
+                <div class="env-label">Today &amp; Always</div>
+              </div>
+              <div class="flip-back">
+                <p class="letter-text">And on this birthday, I want you to know: you are deeply, completely, endlessly cherished. This day belongs to you, love.</p>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /letters-grid -->
+
+        <!-- Story progress hint -->
+        <p class="story-progress" id="story-progress" aria-live="polite">
+          <span id="letters-opened">0</span> / 4 letters opened
+        </p>
+      </div>
+    </section>
+
+
+    <!-- ══ SECTION 3: MEMORY CORKBOARD ══════════════════════ -->
+    <section id="memories" class="section section--memories">
+      <div class="container">
+        <div class="section-header text-center" data-sa="fade-up">
+          <div class="section-badge">Captured Moments</div>
+          <h2 class="section-title">Our Memory Board</h2>
+          <p class="section-sub">Drag the photos around — some have secrets on the back 🤫</p>
+        </div>
+
+        <div id="corkboard" role="region" aria-label="Draggable memory board">
+
+          <!-- Board note -->
+          <div class="board-note" id="board-note" aria-hidden="true">
+            <p>Double-tap any photo to flip it!</p>
+          </div>
+
+          <!-- 6 Draggable, flippable memory cards -->
+          <div class="memo-card" id="mc-0" data-cx="5"  data-cy="8"  data-cr="-3" role="img" aria-label="Memory photo 1">
+            <div class="memo-inner">
+              <div class="memo-front">
+                <img src="https://picsum.photos/seed/bday1/280/200" alt="Memory 1" loading="lazy" />
+                <div class="memo-pin" style="--pc:#ff6b9d"></div>
+              </div>
+              <div class="memo-back"><p>That smile —<br>I never want<br>to forget it 💕</p></div>
+            </div>
+          </div>
+
+          <div class="memo-card" id="mc-1" data-cx="36" data-cy="5"  data-cr="2"  role="img" aria-label="Memory photo 2">
+            <div class="memo-inner">
+              <div class="memo-front">
+                <img src="https://picsum.photos/seed/bday2/280/200" alt="Memory 2" loading="lazy" />
+                <div class="memo-pin" style="--pc:#ffd700"></div>
+              </div>
+              <div class="memo-back"><p>The light was perfect,<br>but not as<br>perfect as you ✨</p></div>
+            </div>
+          </div>
+
+          <div class="memo-card" id="mc-2" data-cx="64" data-cy="7"  data-cr="-1" role="img" aria-label="Memory photo 3">
+            <div class="memo-inner">
+              <div class="memo-front">
+                <img src="https://picsum.photos/seed/bday3/280/200" alt="Memory 3" loading="lazy" />
+                <div class="memo-pin" style="--pc:#9b59b6"></div>
+              </div>
+              <div class="memo-back"><p>Simple moments<br>became extraordinary<br>with you 🌸</p></div>
+            </div>
+          </div>
+
+          <div class="memo-card" id="mc-3" data-cx="12" data-cy="52" data-cr="3"  role="img" aria-label="Memory photo 4">
+            <div class="memo-inner">
+              <div class="memo-front">
+                <img src="https://picsum.photos/seed/bday4/280/200" alt="Memory 4" loading="lazy" />
+                <div class="memo-pin" style="--pc:#ff9bb8"></div>
+              </div>
+              <div class="memo-back"><p>We didn't plan it,<br>but it became<br>my favourite 💖</p></div>
+            </div>
+          </div>
+
+          <div class="memo-card" id="mc-4" data-cx="42" data-cy="50" data-cr="-2" role="img" aria-label="Memory photo 5">
+            <div class="memo-inner">
+              <div class="memo-front">
+                <img src="https://picsum.photos/seed/bday5/280/200" alt="Memory 5" loading="lazy" />
+                <div class="memo-pin" style="--pc:#c06dd4"></div>
+              </div>
+              <div class="memo-back"><p>Your laughter —<br>I want it on<br>repeat forever 😄</p></div>
+            </div>
+          </div>
+
+          <div class="memo-card" id="mc-5" data-cx="70" data-cy="48" data-cr="4"  role="img" aria-label="Memory photo 6">
+            <div class="memo-inner">
+              <div class="memo-front">
+                <img src="https://picsum.photos/seed/bday6/280/200" alt="Memory 6" loading="lazy" />
+                <div class="memo-pin" style="--pc:#7c3aed"></div>
+              </div>
+              <div class="memo-back"><p>Wherever you are —<br>that's where<br>I want to be 🏡</p></div>
+            </div>
+          </div>
+
+        </div><!-- /corkboard -->
+      </div>
+    </section>
+
+
+    <!-- ══ SECTION 4: HEART HUNT ═════════════════════════════ -->
+    <section id="hunt" class="section section--hunt">
+      <div class="container">
+        <div class="hunt-header" data-sa="fade-up">
+          <div class="section-badge">Hidden Treasures</div>
+          <h2 class="section-title">Find the Hidden Hearts</h2>
+          <p class="section-sub">5 hearts are hidden here. Can you find them all?</p>
+          <div class="hunt-counter" aria-live="polite">
+            <span id="hunt-found">0</span><span class="hunt-sep">/</span><span>5</span>
+            <span class="hunt-word">found</span>
+          </div>
+        </div>
+
+        <div class="hunt-arena" id="hunt-arena" role="region" aria-label="Heart hunt area">
+
+          <!-- Visible hearts -->
+          <button class="hunt-heart" id="hh-0" style="top:12%;left:8%"   aria-label="Collect heart">❤️</button>
+          <button class="hunt-heart" id="hh-2" style="top:68%;left:28%"  aria-label="Collect heart">💖</button>
+
+          <!-- Hidden hearts (revealed by hovering ripple zones) -->
+          <button class="hunt-heart is-hidden" id="hh-1" style="top:32%;left:72%" aria-label="Collect heart">💕</button>
+          <button class="hunt-heart is-hidden" id="hh-3" style="top:18%;left:52%" aria-label="Collect heart">❤️</button>
+          <button class="hunt-heart is-hidden" id="hh-4" style="top:62%;left:78%" aria-label="Collect heart">💝</button>
+
+          <!-- Ripple zones (hover/focus these to reveal hidden hearts) -->
+          <div class="ripple-zone" data-reveals="hh-1" style="top:28%;left:68%" aria-label="Something might be here…" tabindex="0" role="button">?</div>
+          <div class="ripple-zone" data-reveals="hh-3" style="top:14%;left:48%" aria-label="Something might be here…" tabindex="0" role="button">?</div>
+          <div class="ripple-zone" data-reveals="hh-4" style="top:58%;left:74%" aria-label="Something might be here…" tabindex="0" role="button">?</div>
+
+          <!-- Reward panel (hidden until all found) -->
+          <div class="hunt-reward" id="hunt-reward" aria-live="polite" hidden>
+            <div class="reward-glow" aria-hidden="true"></div>
+            <p class="reward-emoji">🎉</p>
+            <h3>You found them all!</h3>
+            <p>"You have a gift for finding beauty in hidden places — just like you found your way into my heart."</p>
+          </div>
+
+        </div><!-- /hunt-arena -->
+      </div>
+    </section>
+
+
+    <!-- ══ SECTION 5: REASONS CARD DECK ═════════════════════ -->
+    <section id="reasons" class="section section--reasons">
+      <div class="section-bg-orbs" aria-hidden="true">
+        <div class="orb o4"></div><div class="orb o5"></div>
+      </div>
+      <div class="container">
+        <div class="section-header text-center" data-sa="fade-up">
+          <div class="section-badge">From My Heart</div>
+          <h2 class="section-title">Reasons I Love You</h2>
+          <p class="section-sub">Tap the deck to reveal each one…</p>
+        </div>
+
+        <div class="deck-scene">
+          <!-- Stack (top card is tappable) -->
+          <div class="deck-stack" id="deck-stack" role="button" tabindex="0" aria-label="Tap to reveal next reason">
+            <div class="deck-bg dc-3" aria-hidden="true"></div>
+            <div class="deck-bg dc-2" aria-hidden="true"></div>
+            <div class="deck-bg dc-1" aria-hidden="true"></div>
+            <div class="deck-top" id="deck-top">
+              <div class="deck-tap-hint" id="deck-tap-hint">
+                <span aria-hidden="true">✨</span> Tap to reveal
+              </div>
+            </div>
+          </div>
+
+          <!-- Revealed cards fan out here -->
+          <div class="deck-revealed" id="deck-revealed" aria-live="polite"></div>
+
+          <p class="deck-counter">
+            <span id="deck-cur">0</span> / <span id="deck-max">6</span> revealed
+          </p>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ══ SECTION 6: SPECIAL MESSAGE + HOLD ════════════════ -->
+    <section id="special" class="section section--special">
+      <div class="spotlight" id="spotlight" aria-hidden="true"></div>
+      <div class="container h-100 d-flex align-items-center justify-content-center">
+        <div class="special-wrap" data-sa="special">
+          <p class="special-pre">A message, from my heart to yours…</p>
+          <blockquote class="special-msg" id="typewriter-el"></blockquote>
+          <p class="special-sig">— Always yours, with all my love 💕</p>
+
+          <!-- Hold-to-feel heartbeat interaction -->
+          <div class="hold-zone">
+            <button class="hold-btn" id="hold-btn" aria-label="Hold to feel the heartbeat">
+              <svg class="hold-ring" viewBox="0 0 52 52" aria-hidden="true">
+                <circle class="ring-track" cx="26" cy="26" r="22"/>
+                <circle class="ring-fill"  cx="26" cy="26" r="22" id="hold-ring-fill"/>
+              </svg>
+              <span class="hold-icon" aria-hidden="true">❤️</span>
+            </button>
+            <p class="hold-hint">Hold the heart to feel something…</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ══ SECTION 7: GIFT REVEAL ════════════════════════════ -->
+    <section id="gift" class="section section--gift">
+      <div class="container h-100 d-flex flex-column align-items-center justify-content-center text-center">
+
+        <div class="gift-intro" data-sa="fade-up">
+          <div class="section-badge">A Surprise For You</div>
+          <p class="gift-hint">Click the box to open your surprise…</p>
+        </div>
+
+        <div class="gift-scene" id="gift-scene">
+          <div class="gift-box" id="gift-box" role="button" tabindex="0" aria-label="Open your birthday gift">
+            <div class="gift-lid" id="gift-lid">
+              <div class="lid-ribbon"></div>
+              <div class="lid-bow">
+                <div class="bow-loop bl-l"></div>
+                <div class="bow-loop bl-r"></div>
+                <div class="bow-knot"></div>
+              </div>
+            </div>
+            <div class="gift-base">
+              <div class="base-ribbon"></div>
+              <div class="base-shine"></div>
+            </div>
+          </div>
+          <div class="gift-shadow" aria-hidden="true"></div>
+        </div>
+
+        <div class="gift-reveal" id="gift-reveal" aria-live="polite">
+          <div class="gift-burst" aria-hidden="true">🎉</div>
+          <h2 class="gift-title">Happy Birthday!</h2>
+          <p class="gift-msg">
+            Today the universe celebrates the day you were born.<br />
+            And I celebrate <em>you</em> — every wonderful, beautiful part of you.<br />
+            <strong>I love you more than words can ever say. ❤️</strong>
+          </p>
+          <div class="gift-balloons" aria-hidden="true">
+            <span>🎈</span><span>🎂</span><span>🎈</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ══ SECTION 8: FINAL ══════════════════════════════════ -->
+    <section id="final" class="section section--final">
+      <div id="final-ptc" class="final-particles" aria-hidden="true"></div>
+      <div class="container h-100 d-flex align-items-center justify-content-center">
+        <div class="final-content">
+          <p class="final-badge"  data-sa="final-in">Forever &amp; Always</p>
+          <h2 class="final-title" data-sa="final-in">
+            Happy Birthday,<br /><span class="gradient-text">My Love</span> 🎂
+          </h2>
+          <p class="final-sub"   data-sa="final-in">
+            May this year bring you everything you deserve —<br />
+            which is absolutely everything beautiful.
+          </p>
+          <p class="final-foot"  data-sa="final-in">
+            Made with <span class="heartbeat" aria-label="love">❤️</span> just for you
+          </p>
+          <div class="share-wrap" data-sa="final-in">
+            <button class="share-btn" id="share-btn" aria-label="Share this page">
+              <span aria-hidden="true">💌</span> Share this moment
+            </button>
+            <p class="share-toast" id="share-toast" aria-live="polite">Link copied! ✨</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+  </div><!-- /#experience -->
+
+
+  <!-- ── SCRIPTS ───────────────────────────────────────────── -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/TextPlugin.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
