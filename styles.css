@@ -2254,7 +2254,16 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative; /* Core for absolute chips */
   transition: background 0.3s ease, border-color 0.4s ease;
+}
+
+.slot-box .num-chip {
+  position: absolute !important;
+  margin: 0 !important;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) !important;
 }
 
 .slot-box.correct {

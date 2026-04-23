@@ -933,18 +933,30 @@ function initTimelineLock() {
               snapped = true;
               filled[idx] = true;
               
-              const rect = slot.getBoundingClientRect();
-              const poolRect = pool.getBoundingClientRect();
-              const targetX = rect.left - poolRect.left + (rect.width - 55) / 2;
-              const targetY = rect.top - poolRect.top + (rect.height - 55) / 2;
-
+              // PINPOINT SNAPPING by re-parenting
               this.disable();
               this.target.classList.add('locked');
               slot.classList.add('correct');
+
+              // Move to 0,0 relative to the slot (local centering)
+              const rect = slot.getBoundingClientRect();
+              const chipRect = this.target.getBoundingClientRect();
               
+              // Calculate current offset relative to slot
+              const offsetX = chipRect.left - rect.left;
+              const offsetY = chipRect.top - rect.top;
+
+              // Append to slot but keep visually in place
+              slot.appendChild(this.target);
+              gsap.set(this.target, { x: offsetX, y: offsetY });
+
+              // Animate to center
               gsap.to(this.target, { 
-                x: targetX, y: targetY, scale: 1.1, 
-                duration: 0.5, ease: 'back.out(2)' 
+                x: (rect.width - chipRect.width) / 2, 
+                y: (rect.height - chipRect.height) / 2, 
+                scale: 1, 
+                duration: 0.6, 
+                ease: 'back.out(2)' 
               });
 
               if (typeof SFX !== 'undefined' && SFX.pop) SFX.pop();
