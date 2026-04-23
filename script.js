@@ -553,67 +553,27 @@ function initMemoCards() {
     const baseRot = parseFloat(card.dataset.cr) || 0;
     gsap.set(card, { rotation: baseRot });
 
-    let dragging = false;
-    let startX, startY;
-    let tx = 0, ty = 0;
-    let moved = false;
-    let lastTap = 0;
-
-    card.addEventListener('pointerdown', e => {
-      dragging = true;
-      moved = false;
-      startX = e.clientX - tx;
-      startY = e.clientY - ty;
-      card.setPointerCapture(e.pointerId);
+    card.addEventListener('click', () => {
+      const imgSrc = card.querySelector('.memo-front img').src;
+      const captionHTML = card.querySelector('.memo-back p').innerHTML;
       card.style.zIndex = ++zTop;
-      gsap.to(card, { scale: 1.06, duration: .12 });
-      SFX.click();
-    });
 
-    card.addEventListener('pointermove', e => {
-      if (!dragging) return;
-      const nx = e.clientX - startX;
-      const ny = e.clientY - startY;
-      if (Math.abs(nx - tx) > 4 || Math.abs(ny - ty) > 4) moved = true;
-      tx = nx; ty = ny;
-      gsap.set(card, { x: tx, y: ty });
-    });
-
-    card.addEventListener('pointerup', () => {
-      if (!dragging) return;
-      dragging = false;
-      gsap.to(card, { scale: 1, rotation: baseRot, duration: .55, ease: 'elastic.out(1,.45)' });
-      SFX.drop();
-
-      if (!moved) {
-        const now = Date.now();
-        if (now - lastTap < 380) {
-          // Double-tap
-          const imgSrc = card.querySelector('.memo-front img').src;
-          const captionHTML = card.querySelector('.memo-back p').innerHTML;
-          if (!card.classList.contains('revealed')) {
-            card.classList.add('revealed');
-            const revealedCount = document.querySelectorAll('.memo-card.revealed').length;
-            if (revealedCount >= 6) {
-              unlockState.memoriesDone = true;
-              unlock(2); // memories discovered
-            }
-          }
-          if (window.openLightbox) {
-            window.openLightbox(imgSrc, captionHTML);
-          } else {
-            card.classList.toggle('flipped');
-            SFX.flip();
-          }
-          gsap.fromTo(card, { scale: 1 }, { scale: 1.1, duration: .15, yoyo: true, repeat: 1 });
+      if (!card.classList.contains('revealed')) {
+        card.classList.add('revealed');
+        SFX.sparkle();
+        const revealedCount = document.querySelectorAll('.memo-card.revealed').length;
+        if (revealedCount >= 6) {
+          unlockState.memoriesDone = true;
+          unlock(2); // memories discovered
         }
-        lastTap = now;
       }
-    });
-
-    card.addEventListener('pointercancel', () => {
-      dragging = false;
-      gsap.to(card, { scale: 1, rotation: baseRot, duration: .4, ease: 'back.out(1.5)' });
+      if (window.openLightbox) {
+        window.openLightbox(imgSrc, captionHTML);
+      } else {
+        card.classList.toggle('flipped');
+        SFX.flip();
+      }
+      gsap.fromTo(card, { scale: 1 }, { scale: 1.08, duration: .15, yoyo: true, repeat: 1 });
     });
   });
 
