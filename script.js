@@ -189,6 +189,58 @@ function unlock(n) {
   gsap.fromTo(dot, { scale: 2.5 }, { scale: 1.35, duration: .5, ease: 'elastic.out(2,.5)' });
 }
 
+const unlockState = {
+  storyDone: false,
+  memoriesDone: false,
+  huntDone: false,
+  reasonsDone: false,
+  specialDone: false,
+  giftDone: false,
+};
+
+let toastTimeout;
+function showMadToast(msg) {
+  let el = document.getElementById('mad-toast');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'mad-toast';
+    el.className = 'mad-toast';
+    document.body.appendChild(el);
+  }
+  el.innerHTML = msg;
+  el.classList.add('show');
+  if (typeof SFX !== 'undefined' && SFX.drop) SFX.drop();
+  
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => {
+    el.classList.remove('show');
+  }, 3500);
+}
+
+function initScrollLocks() {
+  const sections = [
+    { id: 'story',    check: () => unlockState.storyDone,    msg: "Hey idiot! Read the letters first! I didn't spend hours writing them for you to ignore! 😠💕" },
+    { id: 'memories', check: () => unlockState.memoriesDone, msg: "Hello? Unveil all 6 photos before scrolling! I worked hard on those! 🙄" },
+    { id: 'hunt',     check: () => unlockState.huntDone,     msg: "You're not leaving until you find all 5 hidden hearts! Keep looking! 😤" },
+    { id: 'reasons',  check: () => unlockState.reasonsDone,  msg: "Tap the deck and see all the reasons I love you! Stop rushing! 🥊" },
+    { id: 'special',  check: () => unlockState.specialDone,  msg: "Hold the heart to feel my heartbeat first... impatient much?! ❤️🥺" },
+    { id: 'gift',     check: () => unlockState.giftDone,     msg: "Are you seriously scrolling past your gift? Open the damn box! 🎁😡" },
+  ];
+
+  sections.forEach(sec => {
+    ScrollTrigger.create({
+      trigger: `#${sec.id}`,
+      start: 'bottom 85%',
+      onEnter: () => {
+        if (!sec.check()) {
+          const el = document.getElementById(sec.id);
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          showMadToast(sec.msg);
+        }
+      }
+    });
+  });
+}
 
 /* ════════════════════════════════════════════════════════════
    4. PRELOADER
@@ -423,6 +475,7 @@ function initStoryLetters() {
       );
 
       if (opened >= 4) {
+        unlockState.storyDone = true;
         unlock(1); // story discovery
         SFX.sparkle();
       }
@@ -464,7 +517,6 @@ function initMemoCards() {
       card.style.zIndex = ++zTop;
       gsap.to(card, { scale: 1.06, duration: .12 });
       SFX.click();
-      unlock(2); // memories discovered
     });
 
     card.addEventListener('pointermove', e => {
@@ -488,7 +540,14 @@ function initMemoCards() {
           // Double-tap
           const imgSrc = card.querySelector('.memo-front img').src;
           const captionHTML = card.querySelector('.memo-back p').innerHTML;
-          card.classList.add('revealed');
+          if (!card.classList.contains('revealed')) {
+            card.classList.add('revealed');
+            const revealedCount = document.querySelectorAll('.memo-card.revealed').length;
+            if (revealedCount >= 6) {
+              unlockState.memoriesDone = true;
+              unlock(2); // memories discovered
+            }
+          }
           if (window.openLightbox) {
             window.openLightbox(imgSrc, captionHTML);
           } else {
@@ -568,6 +627,7 @@ function initHeartHunt() {
   });
 
   function showHuntReward() {
+    unlockState.huntDone = true;
     reward.removeAttribute('hidden');
     reward.classList.add('visible');
     unlock(3); // hearts discovery
@@ -645,6 +705,7 @@ function initCardDeck() {
     if (cur >= REASONS.length) {
       document.getElementById('deck-tap-hint').innerHTML = '🎉 All revealed!';
       stack.style.cursor = 'default';
+      unlockState.reasonsDone = true;
       SFX.sparkle();
     }
   };
@@ -731,6 +792,7 @@ function initHoldButton() {
 
   const completeHold = () => {
     done = true;
+    unlockState.specialDone = true;
     cancelAnimationFrame(raf);
     btn.classList.remove('holding');
     btn.classList.add('complete');
@@ -793,6 +855,7 @@ function initGiftBox() {
         { opacity: 0, y: 40, scale: .87 },
         { opacity: 1, y: 0, scale: 1, duration: .9, ease: 'back.out(1.5)' }
       );
+      unlockState.giftDone = true;
       unlock(4);
 
       // Auto-scroll to the text so the user sees it without manually scrolling
@@ -839,6 +902,8 @@ function initFinalSection() {
    16. SCROLL-TRIGGERED SECTION ANIMATIONS
    ════════════════════════════════════════════════════════════ */
 function initScrollAnimations() {
+  initScrollLocks();
+  
   // Generic fade-up triggers
   gsap.utils.toArray('[data-sa="fade-up"]').forEach(el => {
     gsap.from(el, {

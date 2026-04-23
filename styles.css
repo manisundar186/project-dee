@@ -2184,3 +2184,30 @@ button {
     display: none;
   }
 }
+
+/* ─── MAD TOAST ─────────────────────────────────────────────── */
+.mad-toast {
+  position: fixed;
+  top: 80px; left: 50%;
+  transform: translate(-50%, -100px); /* hidden */
+  background: rgba(220, 20, 60, 0.95);
+  color: white;
+  padding: 1.2rem 2rem;
+  border-radius: 12px;
+  border: 2px solid #ff4d4d;
+  font-family: var(--ff-body);
+  font-size: 1rem;
+  font-weight: 600;
+  box-shadow: 0 10px 40px rgba(220, 20, 60, 0.5);
+  z-index: 999999;
+  text-align: center;
+  width: max-content;
+  max-width: 90vw;
+  opacity: 0;
+  transition: transform 0.4s var(--ease-spring), opacity 0.4s ease;
+  pointer-events: none;
+}
+.mad-toast.show {
+  transform: translate(-50%, 0);
+  opacity: 1;
+}
