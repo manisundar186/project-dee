@@ -340,6 +340,20 @@ function initEntryGate() {
     opened = true;
     SFX.sparkle();
 
+    // Immediately remove CTA text and show loading message
+    const textWrap = document.querySelector('.entry-text');
+    if (textWrap) {
+      gsap.to(textWrap, { 
+        opacity: 0, 
+        y: -10, 
+        duration: 0.3, 
+        onComplete: () => {
+          textWrap.innerHTML = '<p class="entry-loading">Unwrapping our beautiful journey...</p>';
+          gsap.fromTo(textWrap, { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.6, ease: 'back.out(1.5)' });
+        }
+      });
+    }
+
     // Explode the portal outward
     const tl = gsap.timeline();
     tl.to(portal, { scale: 1.25, duration: .2, ease: 'power2.out' })
@@ -1057,28 +1071,6 @@ function initScrollAnimations() {
 }
 
 
-/* ════════════════════════════════════════════════════════════
-   17. MUSIC TOGGLE
-   ════════════════════════════════════════════════════════════ */
-function initMusic() {
-  const btn = document.getElementById('music-toggle');
-  const aud = document.getElementById('bg-music');
-  const on = btn.querySelector('.music-on');
-  const off = btn.querySelector('.music-off');
-  let play = false;
-
-  btn.addEventListener('click', () => {
-    if (play) {
-      aud.pause();
-      on.hidden = false; off.hidden = true; play = false;
-      gsap.fromTo(btn, { rotate: -15 }, { rotate: 0, duration: .3, ease: 'back.out(2)' });
-    } else {
-      aud.play().catch(() => { });
-      on.hidden = true; off.hidden = false; play = true;
-      gsap.fromTo(btn, { scale: .8 }, { scale: 1, duration: .4, ease: 'back.out(2)' });
-    }
-  });
-}
 
 
 /* ════════════════════════════════════════════════════════════
@@ -1257,7 +1249,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initGiftBox();
   initFinalSection();
   initScrollAnimations();
-  initMusic();
   initEditableName();
   initShare();
   initEasterEgg();
