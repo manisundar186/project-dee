@@ -27,7 +27,9 @@
    22. DOMContentLoaded init
    ============================================================ */
 
-gsap.registerPlugin(ScrollTrigger, TextPlugin);
+if (typeof gsap !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger, TextPlugin, Draggable);
+}
 
 // Prevent browser from saving scroll position on refresh
 if (history.scrollRestoration) {
@@ -878,7 +880,7 @@ function initTimelineLock() {
   const reward = document.getElementById('timeline-reward');
   const hintEl = document.getElementById('timeline-hint');
   
-  if (!pool || !gsap.Draggable) return;
+  if (!pool || typeof Draggable === 'undefined') return;
 
   // Let them try for 15s before showing hint
   setTimeout(() => { if (!unlockState.timelineDone) hintEl.removeAttribute('hidden'); }, 15000);
@@ -894,9 +896,17 @@ function initTimelineLock() {
     chip.textContent = val;
     pool.appendChild(chip);
 
-    // Initial floaty position
-    gsap.set(chip, { x: gsap.utils.random(-100, 100), y: gsap.utils.random(-20, 20) });
+    // Initial floaty position within the pool area
+    gsap.set(chip, { 
+      x: gsap.utils.random(-150, 150), 
+      y: gsap.utils.random(-30, 30),
+      scale: 0,
+      opacity: 0
+    });
     
+    // Entrance
+    gsap.to(chip, { scale: 1, opacity: 1, duration: 0.8, delay: i * 0.1, ease: 'back.out(1.7)' });
+
     // Float animation
     gsap.to(chip, { 
       y: '+=15', duration: 2 + Math.random() * 2, 
