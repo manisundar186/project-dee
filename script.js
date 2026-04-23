@@ -227,7 +227,7 @@ function showMadToast(msg) {
   el.innerHTML = msg;
   el.classList.add('show');
   if (typeof SFX !== 'undefined' && SFX.drop) SFX.drop();
-  
+
   clearTimeout(toastTimeout);
   toastTimeout = setTimeout(() => {
     el.classList.remove('show');
@@ -236,13 +236,13 @@ function showMadToast(msg) {
 
 function initScrollLocks() {
   const sections = [
-    { id: 'story',    check: () => unlockState.storyDone,    msg: "Hey idiot! Read the letters first! I didn't spend hours writing them for you to ignore! 😠💕", target: '#letters-grid' },
+    { id: 'story', check: () => unlockState.storyDone, msg: "Hey idiot! Read the letters first! I didn't spend hours writing them for you to ignore! 😠💕", target: '#letters-grid' },
     { id: 'memories', check: () => unlockState.memoriesDone, msg: "Hello? Unveil all 6 photos before scrolling! I worked hard on those! 🙄", target: '#corkboard' },
-    { id: 'hunt',     check: () => unlockState.huntDone,     msg: "You're not leaving until you find all 5 hidden hearts! Keep looking! 😤", target: '#hunt-arena' },
+    { id: 'hunt', check: () => unlockState.huntDone, msg: "You're not leaving until you find all 5 hidden hearts! Keep looking! 😤", target: '#hunt-arena' },
     { id: 'timeline', check: () => unlockState.timelineDone, msg: "There's a secret date hidden here... try dragging the numbers! 🤫📅", target: '#timeline-lock' },
-    { id: 'reasons',  check: () => unlockState.reasonsDone,  msg: "Tap the deck and see all the reasons I love you! Stop rushing! 🥊", target: '.deck-scene' },
-    { id: 'special',  check: () => unlockState.specialDone,  msg: "Hold the heart to feel my heartbeat first... impatient much?! ❤️🥺", target: '.special-wrap' },
-    { id: 'gift',     check: () => unlockState.giftDone,     msg: "Are you seriously scrolling past your gift? Open the damn box! 🎁😡", target: '#gift-scene' },
+    { id: 'reasons', check: () => unlockState.reasonsDone, msg: "Tap the deck and see all the reasons I love you! Stop rushing! 🥊", target: '.deck-scene' },
+    { id: 'special', check: () => unlockState.specialDone, msg: "Hold the heart to feel my heartbeat first... impatient much?! ❤️🥺", target: '.special-wrap' },
+    { id: 'gift', check: () => unlockState.giftDone, msg: "Are you seriously scrolling past your gift? Open the damn box! 🎁😡", target: '#gift-scene' },
   ];
 
   let bounceTimeout;
@@ -272,11 +272,11 @@ function initScrollLocks() {
 
         if (!document.documentElement.classList.contains('is-bouncing')) {
           document.documentElement.classList.add('is-bouncing');
-          
+
           // PINPOINT CENTERING
           const centerEl = document.querySelector(block.target) || el;
           centerEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          
+
           showMadToast(block.msg);
 
           clearTimeout(bounceTimeout);
@@ -290,7 +290,7 @@ function initScrollLocks() {
 }
 
 function toastok(toastEl) {
-    return toastEl && toastEl.classList.contains('show');
+  return toastEl && toastEl.classList.contains('show');
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -731,7 +731,7 @@ function initCardDeck() {
    13. SPECIAL MESSAGE + HOLD HEARTBEAT
    ════════════════════════════════════════════════════════════ */
 const SPECIAL_MESSAGE =
-  '"You are the most precious person in my world. From the moment you walked into my life, everything became more colourful, more warm, more alive. I am so incredibly lucky to love you — and I will spend every day making sure you know it."';
+  '"You are the most precious person in my world. From the moment you walked into my life, everything became more colourful, more warm, more alive. I am so incredibly lucky to love you and I will spend every day making sure you know it."';
 
 function initSpecialSection() {
   // ScrollTrigger: spotlight + typewriter
@@ -839,14 +839,14 @@ function initTimelineLock() {
   const slots = document.querySelectorAll('.slot-box');
   const reward = document.getElementById('timeline-reward');
   const hintEl = document.getElementById('timeline-hint');
-  
+
   if (!pool || typeof Draggable === 'undefined') return;
 
   // Let them try for 15s before showing hint
   setTimeout(() => { if (!unlockState.timelineDone) hintEl.removeAttribute('hidden'); }, 15000);
 
   const filled = new Array(8).fill(null);
-  
+
   // Digit pool (the necessary ones + some decoys)
   const digits = [0, 0, 1, 2, 2, 3, 4, 5, 5, 6, 7, 8, 9].sort(() => Math.random() - 0.5);
 
@@ -856,21 +856,21 @@ function initTimelineLock() {
     chip.textContent = val;
     pool.appendChild(chip);
 
-    // Initial floaty position within the pool area
-    gsap.set(chip, { 
-      x: gsap.utils.random(-150, 150), 
-      y: gsap.utils.random(-30, 30),
+    // Initial floaty position within the pool area (narrowed for mobile safety)
+    gsap.set(chip, {
+      x: gsap.utils.random(-110, 110),
+      y: gsap.utils.random(-25, 25),
       scale: 0,
       opacity: 0
     });
-    
+
     // Entrance
     gsap.to(chip, { scale: 1, opacity: 1, duration: 0.8, delay: i * 0.1, ease: 'back.out(1.7)' });
 
     // Float animation
-    gsap.to(chip, { 
-      y: '+=15', duration: 2 + Math.random() * 2, 
-      repeat: -1, yoyo: true, ease: 'sine.inOut', delay: Math.random() * 2 
+    gsap.to(chip, {
+      y: '+=15', duration: 2 + Math.random() * 2,
+      repeat: -1, yoyo: true, ease: 'sine.inOut', delay: Math.random() * 2
     });
 
     Draggable.create(chip, {
@@ -883,16 +883,16 @@ function initTimelineLock() {
       },
       onRelease() {
         this.target.style.zIndex = 10;
-        
+
         let snapped = false;
         slots.forEach((slot, idx) => {
           if (this.hitTest(slot, '45%')) {
             const digitValue = parseInt(this.target.textContent);
-            
+
             if (digitValue === TARGET_DATE[idx] && !filled[idx]) {
               snapped = true;
               filled[idx] = true;
-              
+
               // PINPOINT SNAPPING by re-parenting
               this.disable();
               this.target.classList.add('locked');
@@ -901,7 +901,7 @@ function initTimelineLock() {
               // Move to 0,0 relative to the slot (local centering)
               const rect = slot.getBoundingClientRect();
               const chipRect = this.target.getBoundingClientRect();
-              
+
               // Calculate current offset relative to slot
               const offsetX = chipRect.left - rect.left;
               const offsetY = chipRect.top - rect.top;
@@ -911,12 +911,12 @@ function initTimelineLock() {
               gsap.set(this.target, { x: offsetX, y: offsetY });
 
               // Animate to center
-              gsap.to(this.target, { 
-                x: (rect.width - chipRect.width) / 2, 
-                y: (rect.height - chipRect.height) / 2, 
-                scale: 1, 
-                duration: 0.6, 
-                ease: 'back.out(2)' 
+              gsap.to(this.target, {
+                x: (rect.width - chipRect.width) / 2,
+                y: (rect.height - chipRect.height) / 2,
+                scale: 1,
+                duration: 0.6,
+                ease: 'back.out(2)'
               });
 
               if (typeof SFX !== 'undefined' && SFX.pop) SFX.pop();
@@ -926,13 +926,13 @@ function initTimelineLock() {
         });
 
         if (!snapped) {
-          gsap.to(this.target, { 
-            x: gsap.utils.random(-100, 100), y: gsap.utils.random(-20, 20),
+          gsap.to(this.target, {
+            x: gsap.utils.random(-100, 100), y: gsap.utils.random(-25, 25),
             duration: 0.6, ease: 'elastic.out(1, 0.5)'
           });
-          gsap.to(this.target, { 
-            y: '+=15', duration: 2 + Math.random() * 2, 
-            repeat: -1, yoyo: true, ease: 'sine.inOut' 
+          gsap.to(this.target, {
+            y: '+=15', duration: 2 + Math.random() * 2,
+            repeat: -1, yoyo: true, ease: 'sine.inOut'
           });
         }
       }
@@ -1033,7 +1033,7 @@ function initFinalSection() {
    ════════════════════════════════════════════════════════════ */
 function initScrollAnimations() {
   initScrollLocks();
-  
+
   // Generic fade-up triggers
   gsap.utils.toArray('[data-sa="fade-up"]').forEach(el => {
     gsap.from(el, {

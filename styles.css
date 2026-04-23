@@ -2360,16 +2360,18 @@ button {
 
 @media (max-width: 600px) {
   .date-display { gap: 0.35rem; }
-  .date-sep { font-size: 1.2rem; }
+  .date-sep { font-size: 1.2rem; margin: 0 2px; }
   .num-chip { width: 44px; height: 44px; font-size: 1.1rem; }
   .slot-box { border-radius: 8px; }
-  .timeline-lock { padding: 1rem 0; }
+  .timeline-lock { padding: 1.5rem 0.5rem; }
+  .section--timeline .container { padding-left: 10px; padding-right: 10px; }
 }
 
 @media (max-width: 380px) {
-  .date-display { gap: 0.2rem; }
-  .slot-box { width: 34px; height: 50px; }
-  .date-sep { display: none; } /* Hide slashes on ultra-small screens to save space */
+  .date-display { gap: 0.25rem; }
+  .slot-box { width: clamp(32px, 8.5vw, 40px); height: 55px; }
+  .date-sep { font-size: 1rem; margin: 0 1px; display: block; }
+  .num-chip { width: 38px; height: 38px; font-size: 1rem; }
 }
 
 /* ─── MAD TOAST ─────────────────────────────────────────────── */
